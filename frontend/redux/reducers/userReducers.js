@@ -42,21 +42,64 @@ const userSlice = createSlice({
     }
 })
 
-export const {userLoginRequest} = userSlice.actions
+export const {userLoginRequest, userLoginFail, userLoginSuccess,userRegisterRequest,
+    userRegisterFail, userRegisterSuccess} = userSlice.actions
 
 export default userSlice.reducer
 
 
 //API CALL FOR USER LOGIN
 
-
+//USER REGISTRATION FUNCTION
 export const userRegister = (userInfo) => async (dispatch) => {
     const config = {
         header: {
             'Content-Type': 'application/json'
         }
     }
-    
+    try{
+        dispatch(userRegisterRequest())
+        const {data} = await axios.post(`${baseUrl}/register`, userInfo, config)
+        console.log(data)
+        dispatch(userRegisterSuccess(data))
+    }catch(err){
+        console.log(err)
+        const error = err.response && err.response.data.message ? err.response.data.message : err.message
+        dispatch(userRegisterFail(error))
 
-    const {data} = axios.post(`${baseUrl}/register`, userInfo, config)
+        setTimeout(() => {
+            dispatch(userRegisterFail(null))
+        }, 3000)
+    }
 }
+
+
+//USER LOGIN FUNCTION HANDLER
+
+export const userLogin = (userInfo) => async (dispatch) => {
+    const config = {
+        header: {
+            "Content-Type": "application/json"
+        }
+    }
+
+
+    try {
+        const {user} = axios.post( `${baseUrl}/login`, userInfo, config)
+        console.log(user)
+        dispatch(userLoginSuccess(user))
+
+        //REDIRECTION TO USER DASHBOARD
+
+    }catch(err){
+        console.log(err)
+        const error = err.response && err.response.data.message ? err.response.data.message : err.message
+        dispatch(userLoginFail(err))
+
+        setTimeout(() => {
+            dispatch(userLoginFail(null))
+        }, 3000)
+    }
+}
+
+

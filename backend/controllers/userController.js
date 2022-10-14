@@ -10,9 +10,10 @@ import generateToken from "../helpers/utils.js";
 // @DESCRIPTION USER LOGIN 
 
 const userRegister = asyncHandler(async (req, res) => {
-  const { firstName, lastName, phone, email, password } = req.body;
-
+  const { firstName, lastName, phone, email, password, } = req.body;
+  
   const staffId = uniqid()
+  const fullName = `${firstName} ${lastName}}`
   try {
     //Check if user Already Exist
     const userExist = await Staff.findOne({ email });
@@ -25,6 +26,7 @@ const userRegister = asyncHandler(async (req, res) => {
       staffId, 
       firstName,
       lastName,
+      fullName,
       phone, email, password 
     })
 
@@ -65,10 +67,6 @@ const userLogin = asyncHandler(async (req, res) => {
 
       const token = await generateToken(user.staffId)
 
-      //Setting The Cookies
-
-      // res.cookie('jwt', token, config.jwt.cookie);
-
       res.status(200).json({
         success: true,
         data: {
@@ -101,6 +99,29 @@ const adminLogin = asyncHandler( async (req, res) => {
   const {email, password} = req.body
 
   try {
+    const admin = Staff.findOne({email: email})
+
+    if (!admin) {
+      throw new Error ("Incorrect Email Provided")
+    }
+
+    if (admin && admin.role !== 'admin') {
+      throw new Error ("You Are Not Authorized To Access This Route.")
+    }
+
+    if (admin && (await admin.matchPassword(password))) { 
+      const token = generateToken(admin.staffId)
+
+      res.status(200).json({
+        success: true,
+        data: {
+          token: token,
+          firstName: admin.firstName,
+          lastName : admin.lastName,
+          email: admin.email,
+        }
+      })
+    }
     
   }catch (err) {
     console.log(err)
@@ -110,4 +131,4 @@ const adminLogin = asyncHandler( async (req, res) => {
   }
 })
 
-export { userRegister, userLogin };
+export { userRegister, userLogin, adminLogin };

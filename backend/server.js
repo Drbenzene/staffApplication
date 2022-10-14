@@ -6,6 +6,7 @@ import db from './config/db.js';
 import dotenv from 'dotenv';
 dotenv.config();
 import userRouter from './routes/userRoutes.js';
+import projectRouter from './routes/projectRoutes.js';
 import JwtCookieComboStrategy from 'passport-jwt-cookiecombo'
 import passport from 'passport'
 
@@ -15,20 +16,15 @@ const app = express();
 app.use(morgan('dev'));
 
 const corsOption = {
-    origin: ''
+    origin: '*'
 }
 app.use(cors(corsOption));
 app.use(express.json({limit:'40mb'}))
 
+
+//Using Server Routes
 app.use("/api/users", userRouter);
-
-//Using Password for Authentication And User Security
-
-passport.use(new JwtCookieComboStrategy({
-    secretOrPublicKey: process.env.JWT_SECRET,
-}, (payload, done) => {
-    return done(null, payload.user);
-}));
+app.use("/api/projects", projectRouter);
 
 
 app.get('/', (req, res) => {
