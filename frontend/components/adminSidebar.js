@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { addProject } from "./Home/AddProject";
+import Modal from "./Modal/AddModal";
+import axios from "axios";
+
+const baseUrl = `http://localhost:5000/api`;
 
 import {
   AiOutlinePlusCircle,
@@ -15,18 +18,31 @@ export default function AdminSideBar({ children }) {
   const [dropShow, setDropShow] = useState(false);
   const [show, setShow] = useState(false);
   const [profile, setProfile] = useState(false);
+  const [projects, setProjects] = useState([]);
 
+console.log(projects, "PROJECTS")
   const dropDownShow = () => {
-
     setDropShow((prev) => !prev);
   };
 
-  const addProjectHandler = () => {
-    addProject();
+useEffect(() => {
+  //API Call To Fetch All Projects 
+  const fetchProjects = async () => {
+    const {data} = await axios.get(`${baseUrl}/projects/`)
+    setProjects(data.projects);
+    // const projects = data.projects
+    // console.log(data.projects, "The Data");
   }
+
+  fetchProjects()
+
+  //API Call To Fetch All Staffs
+
+}, [])
 
   return (
     <>
+    {/* <Modal show={show} setShow={setShow} /> */}
       <div className="w-full h-full bg-gray-200">
         <div className="flex flex-no-wrap">
           {/* Sidebar starts */}
@@ -72,7 +88,7 @@ export default function AdminSideBar({ children }) {
                 </div>
                 </Link>
               </li>
-              <li className="pl-6 cursor-pointer text-gray-600 text-sm leading-3 tracking-normal py-2 hover:text-indigo-700 focus:text-indigo-700 focus:outline-none">
+              <li className="pl-6 cursor-pointer text-gray-600 text-sm leading-3 tracking-normal py-2">
                 <div className="flex items-center">
                   <BiCodeAlt size="18px" />
                   <span className="ml-2">Projects</span>
@@ -91,7 +107,11 @@ export default function AdminSideBar({ children }) {
                 {dropShow && (
    
                           <ul className="m-2">
-                            <li className="m-2">Project 1</li>
+                            {projects && (<>
+                            {projects.map((project) => (
+                            <li className="m-2 text-md p-1 hover:text-red-200">{project.title}</li>
+                            ))}
+                            </>)}
                           </ul>
 
                       )}
@@ -273,13 +293,15 @@ export default function AdminSideBar({ children }) {
                   </div>
                   </Link>
                   
-                  
-                  <div onClick={addProjectHandler} className="flex justify-center items-center mx-10 font-bold bg-black text-white p-2 rounded-full cursor-pointer">
+                  <Link href="/admin/add-project" >
+                  <div className="flex justify-center items-center mx-10 font-bold bg-black text-white p-2 rounded-full cursor-pointer">
                     <AiOutlinePlusCircle size={"25px"} />
+        
                     <p className="mx-2 text-xs">Create Project</p>
                   </div>
+                  </Link>
 
-
+                  
                   </div>
                   <div className="border-t border-gray-300">
                     <div className="w-full flex items-center justify-between px-6 pt-1">
@@ -356,11 +378,12 @@ export default function AdminSideBar({ children }) {
                   </div>
                   </Link>
 
-
-                  <div onClick={addProjectHandler} className="flex justify-center items-center mx-10 font-bold bg-black text-white p-2 rounded-full cursor-pointer w-full">
+                  <Link href="/admin/add-project" >
+                  <div className="flex justify-center items-center mx-10 font-bold bg-black text-white p-2 rounded-full cursor-pointer w-full">
                     <AiOutlinePlusCircle size={"25px"} />
                     <p className="mx-2">Create Project</p>
                   </div>
+                  </Link>
 
                 </div>
                 <div className="w-1/2 hidden lg:flex">
@@ -520,10 +543,10 @@ export default function AdminSideBar({ children }) {
             {/* Navigation ends */}
 
             {/* Remove class [ h-64 ] when adding a card block */}
-            <div className="container mx-auto py-10 md:w-4/5 w-11/12 px-6">
+            <div className="container mx-auto py-5 md:w-4/5 w-11/12 px-1">
 
               {/* Remove class [ border-dashed border-2 border-gray-300 ] to remove dotted border */}
-              <div className="w-full h-full rounded">
+              <div className="">
               {children}
                 {/* Place your content here */}
               </div>

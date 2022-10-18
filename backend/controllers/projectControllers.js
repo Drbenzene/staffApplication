@@ -14,12 +14,10 @@ const addProject = asyncHandler( async (req, res) => {
     console.log(title, "The Title")
 
     //If the Title is Empty 
-
     if (!title) {
-
         throw new Error("Title is required")
     }
-
+    
     const projectId = await uniqid()
 
     // const projectId = 
@@ -42,6 +40,8 @@ const addProject = asyncHandler( async (req, res) => {
         })
     }
 })
+
+
 
 // @METHOD Delete
 // @ROUTE /api/project/delete
@@ -75,7 +75,7 @@ const deleteProject = asyncHandler(async (req,res) => {
 
 
 // @METHOD GET
-// @ROUTE /api/project/all
+// @ROUTE /api/projects/
 // @ACCESS PRIVATE
 //Description FETCH ALL PROJECTS
 

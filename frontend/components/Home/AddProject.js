@@ -1,7 +1,5 @@
 import React from "react";
 import Swal from "sweetalert2";
-import {postProject} from "../../redux/reducers/projectReducers";
-import {useDispatch, useSelector} from "react-redux";
 import axios from 'axios'
 
 

@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema({
     projectId: {type: String},
-    title: {type: String, required: [true, "Title is required"]},
+    title: {type: String, required: [false, "Title is required"]},
     createdAt: {type: Date, default: Date.now()},
 })
 

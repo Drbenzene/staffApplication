@@ -54,34 +54,79 @@ const userRegister = asyncHandler(async (req, res) => {
 const userLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
+  console.log(req.session, "Coming Back")
+
   try {
     //Check if user Already Exist
-    const user = await Staff.findOne({ email });
+    const user = await Staff.findOne({ email: email });
 
     if (!user) {
       throw new Error ("Staff Does Not Exist. Please Register");
     }
-
 
     if (user && (await user.matchPassword(password))) {
 
       const token = await generateToken(user.staffId)
 
       res.status(200).json({
-        success: true,
-        data: {
-          token: token,
+        user: {
+          staffId: user.staffId,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
-          role: user.role,
+          token: token
         }
       })
     } else {
-      throw new Error ("Invalid Credentials");
+      throw new Error ("Invalid Email or Password Provided");
     }
 
+
   } catch(err) {
+    console.log(err)
+    res.status(400).json({
+      message: err.message
+    })
+  }
+})
+
+
+//@METHOD GET
+//@ROUTE /api/users/:id
+//@ACCESS PUBLIC
+//@DESCRIPTION LOG OUT USER
+
+
+export const userLogout = asyncHandler(async (req, res) => {
+  try {
+    req.session.destroy();
+    res.status(200).json({
+      success: true,
+      message: "User Logged Out Successfully"
+    })
+  }catch(err) {
+    console.log(err)
+    res.status(400).json({
+      message: err.message
+    })
+  }
+  
+  
+  res.status(200).json({
+    message: "User Logged Out Successfully"
+  })
+})
+
+
+export const getUserInfo = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await Staff.findById({staffId: id})
+    res.status(200).json({
+      success: true,
+    })
+  }catch(err) {
     console.log(err)
     res.status(400).json({
       message: err.message
@@ -94,8 +139,7 @@ const userLogin = asyncHandler(async (req, res) => {
 // @ACCESS PRIVATE
 // @DESCRIPTION ADMIN LOGIN ACCESS ONLY
 
-
-const adminLogin = asyncHandler( async (req, res) => {
+export const adminLogin = asyncHandler( async (req, res) => {
   const {email, password} = req.body
 
   try {
@@ -131,4 +175,26 @@ const adminLogin = asyncHandler( async (req, res) => {
   }
 })
 
-export { userRegister, userLogin, adminLogin };
+// @METHOD GET
+//ROUTE /api/admin/staffs/all
+// @ACCESS PRIVATE
+// @DESCRIPTION GET ALL USERS ADMIN ONLY
+
+const getAllStaffs = asyncHandler(async (req, res) => {
+  try {
+    const staffs = await Staff.find()
+    res.status(200).json({
+      success: true,
+      data: staffs
+    })
+  }catch(err) {
+    console.log(err)
+    res.status(400).json({
+      message: err.message
+    })
+  }
+})
+
+
+
+export { userRegister, userLogin, getAllStaffs };

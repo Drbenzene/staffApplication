@@ -15,10 +15,9 @@ const staffSchema = new mongoose.Schema({
     tasks: {type: Array, default: []},
     phone:{type: Number, required: [true, "Phone is Required"]},
     role: {type: String, default: "staff", enum: ["staff", "admin"]},
-    image: {type: String, defult: "https://res.cloudinary.com/dlhjvo4tz/image/upload/v1663689772/w4rcoxixuvgeiwwqhvjd.png"},
+    profileImage: {type: String, defult: "https://res.cloudinary.com/dlhjvo4tz/image/upload/v1663689772/w4rcoxixuvgeiwwqhvjd.png" },
     createdAt:{type: Date, default: Date.now()},
 })
-
 
 //Encrypting user Password Before Saving
 

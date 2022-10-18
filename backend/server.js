@@ -5,10 +5,10 @@ import color from 'colors'
 import db from './config/db.js';
 import dotenv from 'dotenv';
 dotenv.config();
+import session from 'express-session';
 import userRouter from './routes/userRoutes.js';
 import projectRouter from './routes/projectRoutes.js';
-import JwtCookieComboStrategy from 'passport-jwt-cookiecombo'
-import passport from 'passport'
+import csrf from 'csurf';
 
 const app = express();
 
@@ -20,6 +20,28 @@ const corsOption = {
 }
 app.use(cors(corsOption));
 app.use(express.json({limit:'40mb'}))
+
+//USING EXPRESS SESSION
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    name: "session",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        secure: false
+    }
+}))
+
+// app.use(csrf())
+
+app.use(function(req, res, next) {
+    res.locals.session = req.session;
+    res.locals.user = req.session.user;
+    next();
+})
+
+
 
 
 //Using Server Routes

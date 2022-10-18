@@ -1,7 +1,11 @@
-import { Fragment, useState } from 'react'
+// import { Fragment, useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import {HiOutlineSelector} from 'react-icons/hi'
 import {BsCheck} from 'react-icons/bs'
+import axios from 'axios'
+import React,  { useEffect, useState, Fragment, useMemo } from 'react'
+
+const baseUrl = "http://localhost:5000/api/users";
 
 const people = [
   {
@@ -70,8 +74,28 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
+
+
+
 export default function ProjectLists() {
   const [selected, setSelected] = useState(people[3])
+
+  const [staffs, setstaffs] = useState([]);
+
+  const fetchStaffs = async () => {
+      const {data} = await axios.get(`${baseUrl}/admin/staffs/all`);
+      setstaffs(data.data);
+  };
+
+  useMemo(() => {
+      fetchStaffs();
+  }, [])
+
+
+
+
+
+
 
   return (
     <Listbox value={selected} onChange={setSelected}>

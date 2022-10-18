@@ -3,11 +3,31 @@ import Link from "next/link";
 import Date from './Date'
 import StaffsLists from "./StaffsLists";
 import ProjectLists from "./ProjectsLists";
+import { useQuery } from "react-query";
+import axios from "axios";
+
+const baseUrl = "http://localhost:5000/api/users";
 
 const AddTask = (props) =>  {
-    
+    const [staffs, setstaffs] = useState([]);
+
+    const fetchStaffs = async () => {
+        const {data} = await axios.get(`${baseUrl}/admin/staffs/all`);
+        setstaffs(data.data);
+    };
+
+    useEffect(() => {
+        fetchStaffs();
+    }, [])
+
+
+
+
+
+
     return (
     <div>
+    
         <div id="popup" className="inset-0 z-50 right-100 py-12">
             <div className="flex w-full justify-center ">
                 <div className="bg-white dark:bg-gray-800 shadow-lg w-full md:w-11/12 pt-10 px-10 max-w-2xl z-50">

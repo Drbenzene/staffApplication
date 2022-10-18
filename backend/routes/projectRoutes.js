@@ -1,5 +1,5 @@
 import express from 'express'
-import { addProject, deleteProject, allProject } from '../controllers/projetControllers.js'
+import { addProject, deleteProject, allProject } from '../controllers/projectControllers.js'
 
 //Creating Project Routes
 
